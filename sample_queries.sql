@@ -160,3 +160,10 @@ JOIN order_items oi USING(order_id)
 WHERE state='VA'
 GROUP BY c.customer_id, c.first_name, c.last_name
 HAVING total_sales>100;
+
+-- Rollup operator only mysql gives summery of aggreagte columns --
+SELECT pm.name AS payment_method, SUM(amount) as TOTAL
+FROM payments p JOIN payment_methods pm ON p.payment_method = pm.payment_method_id
+GROUP BY pm.name
+WITH ROLLUP;
+
