@@ -1,4 +1,4 @@
--- ************* Retrieving from single table*************** --
+-- ************* 1. Retrieving from single table*************** --
  -- covers various clauses and operators --
 USE sql_store;
 SELECT name, unit_price, (unit_price*1.1) AS new_price from products;
@@ -25,7 +25,7 @@ SELECT * FROM customers ORDER BY points DESC LIMIT 3;
 -- order of clauses  select -> from -> where -> order by -> limit
 
 
--- ***********Retrieving Data from multiple tables************ -- 
+-- *********** 2. Retrieving Data from multiple tables************ -- 
 USE sql_store;
 
 -- INNER JOIN --
@@ -93,3 +93,31 @@ SELECT customer_id, first_name,points, 'SILVER' as type from customers where poi
 UNION
 SELECT customer_id, first_name,points, 'GOLD' as type from customers where points>3000 ORDER BY first_name;
 
+-- ############## 3. Inserting updating deleting data ###########------------
+
+-- insert --
+USE sql_store;
+INSERT INTO products (name, quantity_in_stock, unit_price) VALUES 
+						('product1', 1, 1.1),
+						('product2', 2, 2.2),
+						('product3', 3, 3.3);
+-- insert into multiple tables --
+INSERT INTO orders(customer_id,order_date,status) VALUES(1, '2019-01-02',1);
+
+
+-- CREATING COPY OF TABLE --
+USE sql_invoicing;
+CREATE TABLE invoices_archieved AS
+SELECT invoice_id, i.number, c.name AS client_name,invoice_total,payment_total,invoice_date,payment_date
+FROM invoices i JOIN clients c USING(client_id) WHERE payment_date IS NOT NULL; 
+
+-- update --
+USE sql_store;
+UPDATE customers SET points = points+50 where birth_date < '1990-01-01';
+
+UPDATE orders SET comments = 'Gold customer' where customer_id IN(
+SELECT customer_id FROM customers WHERE points > 3000);
+
+-- DELETE --
+USE sql_invoicing;
+DELETE FROM invoices where client_id=(SELECT client_id FROM clients where name ='Myworks');
